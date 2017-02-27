@@ -5,6 +5,9 @@ import java.util.Scanner;
 import java.util.Arrays;
 
 public class puzzle_solver{
+	
+	char[][] solved_puzzle = new char[52][52];
+	
 	public static void main(String[] args){
 		char[][] puzzle;
 		String[] words;
@@ -62,6 +65,14 @@ public class puzzle_solver{
 		}
 	}
 	
+	public void create_empty_grid(char[][]solved_puzzle){
+		for(int i = 0; i < 52; i++){
+			for(int j = 0; j < 52; j++){
+				solved_puzzle[i][j] = ' ';
+			}
+		}
+	}
+	
 	//Get all the words from wordlist.txt to search for in puzzle
 	public String[] get_words(String the_file){
 		String[] words = new String[20];
@@ -96,6 +107,7 @@ public class puzzle_solver{
 	char array in the 2D puzzle*/ 
 	public void solve_puzzle(char[][] puzzle, String[] words) {
 		print_words(words); //Delete later
+		create_empty_grid(solved_puzzle);
 		for(int i = 0; i < 20; i++){
 			String current_word = words[i];
 			char[] word_as_chars = current_word.toCharArray();
@@ -104,6 +116,9 @@ public class puzzle_solver{
 			System.out.println("----------------------------");
 		}
 		print_multid_array(puzzle); //Delete later
+		System.out.println("------------------------------------------------------");
+		print_multid_array(solved_puzzle); 
+		System.out.println("------------------------------------------------------");
 	}
 
 	public void find_word(char[][] puzzle, char[] word_as_chars) {
@@ -116,6 +131,7 @@ public class puzzle_solver{
 outer:	for(int row = 1; row < 51; row++){
 			for(int column = 1; column < 51; column++){
 				if(puzzle[row][column] == first_character){
+					
 					//checking North for second character
 					if(puzzle[row-1][column] == word_as_chars[1]){
 						if(puzzle[row-2][column] == word_as_chars[2]){
@@ -129,6 +145,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//checking North-East for second character
 					if(puzzle[row-1][column+1] == word_as_chars[1]){
 						if(puzzle[row-2][column+2] == word_as_chars[2]){
@@ -142,6 +159,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//checking East for second character
 					if(puzzle[row][column+1] == word_as_chars[1]){
 						if(puzzle[row][column+2] == word_as_chars[2]){
@@ -155,6 +173,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//Checking South-East for second character
 					if(puzzle[row+1][column+1] == word_as_chars[1]){
 						if(puzzle[row+2][column+2] == word_as_chars[2]){
@@ -168,6 +187,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//Checking South for second character
 					if(puzzle[row+1][column] == word_as_chars[1]){
 						if(puzzle[row+2][column] == word_as_chars[2]){
@@ -181,6 +201,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//Checking South-West for second character
 					if(puzzle[row+1][column-1] == word_as_chars[1]){
 						if(puzzle[row+2][column-2] == word_as_chars[2]){
@@ -194,6 +215,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//Checking West for second character
 					if(puzzle[row][column-1] == word_as_chars[1]){
 						if(puzzle[row][column-2] == word_as_chars[2]){
@@ -207,6 +229,7 @@ outer:	for(int row = 1; row < 51; row++){
 							break outer;
 						}
 					}
+					
 					//Checking North-West for second character
 					if(puzzle[row-1][column-1] == word_as_chars[1]){
 						if(puzzle[row-2][column-2] == word_as_chars[2]){
@@ -227,6 +250,11 @@ outer:	for(int row = 1; row < 51; row++){
 	
 	//The following methods check different directions for third characters and more.
 	public boolean check_N(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row + 1;
+		int original_start_column = column;
+		int end_row, end_column;
+		
 		System.out.println("check_N is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -235,6 +263,17 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in N");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row-(i+1);
+					end_column = column;
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					for(int a = original_start_row; a >= end_row; a--){
+						solved_puzzle[a][column] = puzzle[a][column];
+					}
+					
 					return true;
 				}
 			}else{
@@ -245,6 +284,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_NE(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row + 1;
+		int original_start_column = column - 1;
+		int end_row, end_column;
+		
 		System.out.println("check_NE is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -253,6 +297,21 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in NE");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row-(i+1);
+					end_column = column+(i+1);
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					int a = original_start_row;
+					int b = original_start_column;
+					while(a >= end_row && b <= end_column){
+						solved_puzzle[a][b] = puzzle[a][b];
+						a--;
+						b++;
+					}
+					
 					return true;
 				}
 			}else{
@@ -263,6 +322,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_E(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row;
+		int original_start_column = column - 1;
+		int end_row, end_column;
+		
 		System.out.println("check_E is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -271,6 +335,17 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in E");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row;
+					end_column = column+(i+1);
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					for(int b = original_start_column; b <= end_column; b++){
+						solved_puzzle[row][b] = puzzle[row][b];
+					}
+					
 					return true;
 				}
 			}else{
@@ -281,6 +356,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_SE(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row-1;
+		int original_start_column = column - 1;
+		int end_row, end_column;
+		
 		System.out.println("check_SE is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -289,6 +369,21 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in SE");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row+(i+1);
+					end_column = column+(i+1);
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					int a = original_start_row;
+					int b = original_start_column;
+					while(a <= end_row && b <= end_column){
+						solved_puzzle[a][b] = puzzle[a][b];
+						a++;
+						b++;
+					}
+					
 					return true;
 				}
 			}else{
@@ -299,6 +394,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_S(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row-1;
+		int original_start_column = column;
+		int end_row, end_column;
+		
 		System.out.println("check_S is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -307,6 +407,17 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in S");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row+(i+1);
+					end_column = column;
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					for(int a = original_start_row; a <= end_row; a++){
+						solved_puzzle[a][column] = puzzle[a][column];
+					}
+					
 					return true;
 				}
 			}else{
@@ -317,6 +428,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_SW(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row-1;
+		int original_start_column = column+1;
+		int end_row, end_column;
+		
 		System.out.println("check_SW is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -325,6 +441,21 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in SW");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row+(i+1);
+					end_column = column-(i+1);
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					int a = original_start_row;
+					int b = original_start_column;
+					while(a <= end_row && b >= end_column){
+						solved_puzzle[a][b] = puzzle[a][b];
+						a++;
+						b--;
+					}
+					
 					return true;
 				}
 			}else{
@@ -335,6 +466,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_W(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row;
+		int original_start_column = column+1;
+		int end_row, end_column;
+		
 		System.out.println("check_W is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -343,6 +479,17 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in W");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row;
+					end_column = column-(i+1);
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					for(int b = original_start_column; b >= end_column; b--){
+						solved_puzzle[row][b] = puzzle[row][b];
+					}
+					
 					return true;
 				}
 			}else{
@@ -353,6 +500,11 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	public boolean check_NW(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+		
+		int original_start_row = row+1;
+		int original_start_column = column+1;
+		int end_row, end_column;
+		
 		System.out.println("check_NW is called");
 		int remaining_length = chars_after_second_pos.length;
 		int counter = 0;
@@ -361,6 +513,20 @@ outer:	for(int row = 1; row < 51; row++){
 				counter++;
 				if(counter == remaining_length){
 					System.out.println("Found something in NW");
+					System.out.println("Word start row: " + original_start_row);
+					System.out.println("Word start col: " + original_start_column);
+					end_row = row-(i+1);
+					end_column = column-(i+1);
+					System.out.println("Word end row: " + end_row);
+					System.out.println("Word end col: " + end_column);
+					
+					int a = original_start_row;
+					int b = original_start_column;
+					while(a >= end_row && b >= end_column){
+						solved_puzzle[a][b] = puzzle[a][b];
+						a--;
+						b--;
+					}
 					return true;
 				}
 			}else{
