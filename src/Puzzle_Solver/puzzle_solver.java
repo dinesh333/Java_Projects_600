@@ -25,6 +25,9 @@ public class puzzle_solver{
 		words = solver.get_words("wordlist.txt");
 		solver.create_empty_grid(solved_puzzle);
 		solver.solve_puzzle(puzzle, words, solved_puzzle);
+		
+		elapsed_time = System.nanoTime() - start_time;
+		System.out.println("\nRunning time: " + (elapsed_time * (Math.pow(10, -6))) + " ms");
 	}
 
 	//Put each character from puzzleinput.txt into 2D array
