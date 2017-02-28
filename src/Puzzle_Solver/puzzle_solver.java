@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Arrays;
+import java.lang.*;
 
 public class puzzle_solver{
 	//2 extra rows and columns to help with checking in the boundaries.
@@ -11,10 +12,13 @@ public class puzzle_solver{
 	final static int puzzle_words = 20;
 	
 	public static void main(String[] args){
-		char[][] puzzle;
+		long start_time, elapsed_time;
+		start_time = System.nanoTime();
+		
+		char[][] puzzle, solved_puzzle;
 		String[] words;
 		//Holds the final solved puzzle for neatly printing on screen.
-		char[][] solved_puzzle = new char[puzzle_rows][puzzle_cols];
+		solved_puzzle = new char[puzzle_rows][puzzle_cols];
 		
 		puzzle_solver solver = new puzzle_solver();
 		puzzle = solver.get_puzzle("puzzleinput.txt");
@@ -138,6 +142,7 @@ public class puzzle_solver{
 		}
 	}
 
+	//Find a word in the puzzle starting at begin_row and begin_col. 
 	public void find_word(char[][] puzzle, String current_word, Number number_info, int begin_row, int begin_col, char[][] solved_puzzle) {
 		char[] word_as_chars = current_word.toCharArray();
 		char first_character = word_as_chars[0];
