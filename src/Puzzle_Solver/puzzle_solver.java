@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 public class puzzle_solver{
 	
+	//Holds the final solved puzzle.
 	char[][] solved_puzzle = new char[52][52];
 	
 	public static void main(String[] args){
@@ -108,28 +109,47 @@ public class puzzle_solver{
 	public void solve_puzzle(char[][] puzzle, String[] words) {
 		print_words(words); //Delete later
 		create_empty_grid(solved_puzzle);
+		
+		Number[] numbers = new Number[20];
 		for(int i = 0; i < 20; i++){
-			String current_word = words[i];
-			char[] word_as_chars = current_word.toCharArray();
+			numbers[i] = new Number();
+		}
+		
+		String current_word;
+		char[] word_as_chars;
+		for(int i = 0; i < 20; i++){
+			current_word = words[i];
+			word_as_chars = current_word.toCharArray();
 			System.out.println("Searching for word- " + current_word + ": ");
-			find_word(puzzle, word_as_chars);
+			find_word(puzzle, word_as_chars, numbers[i], current_word, 1, 1);
 			System.out.println("----------------------------");
 		}
 		print_multid_array(puzzle); //Delete later
 		System.out.println("------------------------------------------------------");
 		print_multid_array(solved_puzzle); 
 		System.out.println("------------------------------------------------------");
+		for(int i = 0; i < 20; i++){
+			for(int j = 0; j < 20; j++){
+				if(is_within(numbers[i], numbers[j])){
+					current_word = numbers[i].number;
+					word_as_chars = current_word.toCharArray();
+					find_word(puzzle, word_as_chars, numbers[i], current_word, numbers[i].start_row, numbers[i].start_col+1);;
+					System.out.println("I am being executed");
+				}	
+			}
+		}
+		print_multid_array(solved_puzzle); 
 	}
 
-	public void find_word(char[][] puzzle, char[] word_as_chars) {
+	public void find_word(char[][] puzzle, char[] word_as_chars, Number number_info, String current_word, int begin_row, int begin_col) {
 		int word_length = word_as_chars.length;
 		char[] chars_after_second_pos = Arrays.copyOfRange(word_as_chars, 2, word_length);
 		char first_character = word_as_chars[0];
 		System.out.println("First letter- " + first_character); //Delete
 		System.out.println("Third letter forwards- " + new String(chars_after_second_pos)); //Delete
 		boolean found = false;
-outer:	for(int row = 1; row < 51; row++){
-			for(int column = 1; column < 51; column++){
+outer:	for(int row = begin_row; row < 51; row++){
+			for(int column = begin_col; column < 51; column++){
 				if(puzzle[row][column] == first_character){
 					
 					//checking North for second character
@@ -139,7 +159,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row-1][column]  + ": " + (row-1) + " Column: "+ column);
 							System.out.println("Row third char " + puzzle[row-2][column]  + ": " + (row-2) + " Column: "+ column);
 						}
-						found = check_N(puzzle, chars_after_second_pos, row-1, column);
+						found = check_N(puzzle, chars_after_second_pos, row-1, column, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -153,7 +173,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row-1][column+1] + ": " + (row-1) + " Column: "+ (column+1));
 							System.out.println("Row third char " + puzzle[row-2][column+2]  + ": " + (row-2) + " Column: "+ (column+2));
 						}
-						found = check_NE(puzzle, chars_after_second_pos, row-1, column+1);
+						found = check_NE(puzzle, chars_after_second_pos, row-1, column+1, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -167,7 +187,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row][column+1] + ": " + (row) + " Column: "+ (column+1));
 							System.out.println("Row second char " + puzzle[row][column+2] + ": " + (row) + " Column: "+ (column+2));
 						}
-						found = check_E(puzzle, chars_after_second_pos, row, column+1);
+						found = check_E(puzzle, chars_after_second_pos, row, column+1, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -181,7 +201,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row+1][column+1] + ": " + (row+1) + " Column: "+ (column+1));
 							System.out.println("Row second char " + puzzle[row+2][column+2] + ": " + (row+2) + " Column: "+ (column+2));
 						}
-						found = check_SE(puzzle, chars_after_second_pos, row+1, column+1);
+						found = check_SE(puzzle, chars_after_second_pos, row+1, column+1, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -195,7 +215,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row+1][column] + ": " + (row+1) + " Column: "+ (column));
 							System.out.println("Row second char " + puzzle[row+2][column] + ": " + (row+2) + " Column: "+ (column));
 						}
-						found = check_S(puzzle, chars_after_second_pos, row+1, column);
+						found = check_S(puzzle, chars_after_second_pos, row+1, column, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -209,7 +229,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row+1][column-1] + ": " + (row+1) + " Column: "+ (column-1));
 							System.out.println("Row second char " + puzzle[row+2][column-2] + ": " + (row+2) + " Column: "+ (column-2));
 						}
-						found = check_SW(puzzle, chars_after_second_pos, row+1, column-1);
+						found = check_SW(puzzle, chars_after_second_pos, row+1, column-1, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -223,7 +243,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row][column-1] + ": " + (row) + " Column: "+ (column-1));
 							System.out.println("Row second char " + puzzle[row][column-2] + ": " + (row) + " Column: "+ (column-2));
 						}
-						found = check_W(puzzle, chars_after_second_pos, row, column-1);
+						found = check_W(puzzle, chars_after_second_pos, row, column-1, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -237,7 +257,7 @@ outer:	for(int row = 1; row < 51; row++){
 							System.out.println("Row second char " + puzzle[row-1][column-1] + ": " + (row-1) + " Column: "+ (column-1));
 							System.out.println("Row second char " + puzzle[row-2][column-2] + ": " + (row-2) + " Column: "+ (column-2));
 						}
-						found = check_NW(puzzle, chars_after_second_pos, row-1, column-1);
+						found = check_NW(puzzle, chars_after_second_pos, row-1, column-1, number_info, current_word);
 						if(found == true){
 							System.out.println(new String(word_as_chars));
 							break outer;
@@ -249,7 +269,7 @@ outer:	for(int row = 1; row < 51; row++){
 	}
 	
 	//The following methods check different directions for third characters and more.
-	public boolean check_N(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_N(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row + 1;
 		int original_start_column = column;
@@ -274,6 +294,8 @@ outer:	for(int row = 1; row < 51; row++){
 						solved_puzzle[a][column] = puzzle[a][column];
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -283,7 +305,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_NE(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_NE(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row + 1;
 		int original_start_column = column - 1;
@@ -312,6 +334,8 @@ outer:	for(int row = 1; row < 51; row++){
 						b++;
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -321,7 +345,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_E(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_E(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row;
 		int original_start_column = column - 1;
@@ -346,6 +370,8 @@ outer:	for(int row = 1; row < 51; row++){
 						solved_puzzle[row][b] = puzzle[row][b];
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -355,7 +381,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_SE(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_SE(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row-1;
 		int original_start_column = column - 1;
@@ -384,6 +410,8 @@ outer:	for(int row = 1; row < 51; row++){
 						b++;
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -393,7 +421,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_S(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_S(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row-1;
 		int original_start_column = column;
@@ -418,6 +446,8 @@ outer:	for(int row = 1; row < 51; row++){
 						solved_puzzle[a][column] = puzzle[a][column];
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -427,7 +457,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_SW(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_SW(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row-1;
 		int original_start_column = column+1;
@@ -456,6 +486,8 @@ outer:	for(int row = 1; row < 51; row++){
 						b--;
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -465,7 +497,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_W(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_W(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row;
 		int original_start_column = column+1;
@@ -490,6 +522,8 @@ outer:	for(int row = 1; row < 51; row++){
 						solved_puzzle[row][b] = puzzle[row][b];
 					}
 					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -499,7 +533,7 @@ outer:	for(int row = 1; row < 51; row++){
 		return false;
 	}
 	
-	public boolean check_NW(char[][] puzzle, char[] chars_after_second_pos, int row, int column) {
+	public boolean check_NW(char[][] puzzle, char[] chars_after_second_pos, int row, int column, Number number_info, String current_word) {
 		
 		int original_start_row = row+1;
 		int original_start_column = column+1;
@@ -527,6 +561,9 @@ outer:	for(int row = 1; row < 51; row++){
 						a--;
 						b--;
 					}
+					
+					number_info.set_number(current_word, original_start_row, original_start_column, end_row, end_column);
+					
 					return true;
 				}
 			}else{
@@ -534,5 +571,29 @@ outer:	for(int row = 1; row < 51; row++){
 			}
 		}
 		return false;
+	}
+	
+	//Check if f_number is within s_number
+	public boolean is_within(Number f_number, Number s_number) {
+		if((f_number.start_row == s_number.start_row) &&
+		   (f_number.start_col == s_number.start_col) &&
+		   (f_number.end_row == s_number.end_row)     &&
+		   (f_number.start_col < f_number.end_col)    &&
+		   (f_number.end_col < s_number.end_col))
+			return true;
+		return false;
+	}
+	
+	private class Number{
+		String number;
+		int start_row, start_col, end_row, end_col;
+		
+		public void set_number(String num, int s_row, int s_col, int e_row, int e_col){
+			number = num;
+			start_row = s_row;
+			start_col = s_col;
+			end_row = e_row;
+			end_col = e_col;
+		}
 	}
 }
