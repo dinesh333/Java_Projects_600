@@ -46,6 +46,7 @@ public class SequenceFinder {
 			}
 			row++;
 		}
+		scan.close();
 		return matrix;
 	}
 	
