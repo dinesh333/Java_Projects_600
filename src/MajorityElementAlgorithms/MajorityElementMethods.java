@@ -2,21 +2,17 @@ package MajorityElementAlgorithms;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MajorityElementMethods {
-	
-	public static int rows;
-	public static int columns;
-	public static int[][] matrix;
-	
 	public static void main(String[] args){
-		matrix = getDataFromFile("Majex1.txt");
-		findMajorityElementByMethod1();
+		int[] allElements = getDataFromFile("Majex1.txt");
+		System.out.println(allElements.length);
+		findMajorityElementByMethod1(allElements);
 	}
 
-	public static int[][] getDataFromFile(String inputFile){
-		//Get numbers of rows and columns in file
+	public static int[] getDataFromFile(String inputFile){
 		File matrixFile = new File(inputFile);
 		Scanner scan = null;
 		try{
@@ -24,67 +20,37 @@ public class MajorityElementMethods {
 		} catch(FileNotFoundException e) {
 			System.out.println("File " + inputFile + " not found");
 		}
-		
-		int total_rows = 0;
-		while(scan.hasNextLine()){
-			String line = scan.nextLine();
-			if(total_rows == 0){	
-				String[] numbersInACol = line.split(" ");
-				columns = numbersInACol.length;
-				System.out.println("Columns in file " + inputFile + " " + numbersInACol.length);
-			}
-			total_rows++;
-		}
-		rows = total_rows;
-		System.out.println("Rows in file " + inputFile + " " + rows  + "\n");
-		scan.close();
-		
-		//make a matrix and initialize with all 0's
-		int[][] matrix = new int[rows][columns];
-		for(int i = 0; i < rows; i++){
-			for(int j = 0; j < columns; j++){
-				matrix[i][j] = 0;
-			}
+
+		ArrayList<Integer> numbers = new ArrayList<Integer>();
+		while(scan.hasNextInt()){
+			Integer i = scan.nextInt();
+			numbers.add(i);
 		}
 		
-		//Get data from file and put in a 2D array
-		scan = null;
-		try{
-			scan = new Scanner(matrixFile);
-		} catch(FileNotFoundException e) {
-			System.out.println("File " + inputFile + " not found");
-		}
-		
-		int row = 0;
-		int cols = columns;
-		while(scan.hasNextLine()){
-			String line = scan.nextLine();	
-			String[] numbersInACol = line.split(" ");
-			for(int col = 0; col < cols; col++){
-				if(numbersInACol.length == cols){
-					int number = Integer.parseInt(numbersInACol[col].toString());
-					matrix[row][col] = number;
-				} else {
-					cols = numbersInACol.length;
-					int number = Integer.parseInt(numbersInACol[col].toString());
-					matrix[row][col] = number;
-				}
-			}
-			row++;
-		}
-		
-		//Print Matrix
-		for(int i = 0; i < rows; i++){
-			for(int j = 0; j < columns; j++){
-				System.out.print(matrix[i][j] + " ");
-			}
-			System.out.println("");
+		int[] allElements = new int[numbers.size()];
+		for(int i = 0; i < allElements.length;i++){
+			allElements[i] = numbers.get(i);
 		}
 		scan.close();
-		return matrix;
+		return allElements;
 	}
 	
-	public static void findMajorityElementByMethod1() {
-		
+	public static void findMajorityElementByMethod1(int[] allElements) {
+		int arrayLength = allElements.length;
+		boolean majorityElementExists = false;
+		for(int majorityCandidate = 0; majorityCandidate < arrayLength; majorityCandidate++){
+			int counter = 0;
+			for(int otherNum = 0; otherNum < arrayLength; otherNum++){
+				if(allElements[otherNum] == allElements[majorityCandidate])
+					counter++;
+			}
+			if(counter >= arrayLength/2){
+				majorityElementExists = true;
+				System.out.println(allElements[majorityCandidate] + " is the majority element");
+				break;
+			}
+		}
+		if(!majorityElementExists)
+			System.out.println("No majority element exists");
 	}
 }
