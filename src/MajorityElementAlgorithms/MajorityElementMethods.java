@@ -7,19 +7,35 @@ import java.util.Scanner;
 
 public class MajorityElementMethods {
 	public static void main(String[] args){
-		String fileName = "Majex1.txt"; //CHANGE FILE NAME TO TRY A DIFFERENT FILE
+		long startTime, stopTime;
+		
+		String fileName = "Majex4.txt"; //CHANGE FILE NAME TO TRY A DIFFERENT FILE
 		int[] allElements = getDataFromFile(fileName);
-		System.out.println(allElements.length);
 		
 		//Method 1: O(N^2)
+		startTime = System.nanoTime();
 		findMajorityElementByMethod1(allElements, fileName);
+		stopTime = System.nanoTime();
+		getRunningTime(startTime, stopTime);
 		
 		//Method 2: O(N*logN)
+		startTime = System.nanoTime();
 		int element = findMajorityElementByMethod2(allElements);
 		checkIfElementIsMajority(element, fileName);
+		stopTime = System.nanoTime();
+		getRunningTime(startTime, stopTime);
 		
 		//Method 3: O(N)
-		findMajorityElementByMethod2(allElements);	
+		startTime = System.nanoTime();
+		int majorityIndex = findMajorityElementByMethod3(allElements, fileName);
+		checkIfIndexHasMajority(allElements, fileName, majorityIndex);
+		stopTime = System.nanoTime();
+		getRunningTime(startTime, stopTime);
+	}
+	
+	public static void getRunningTime(long startTime, long stopTime){
+		long elapsedTime = stopTime - startTime;
+		System.out.println("Running time: " + (elapsedTime * (Math.pow(10, -6))) + " ms\n");
 	}
 
 	public static int[] getDataFromFile(String inputFile){
@@ -108,7 +124,7 @@ public class MajorityElementMethods {
 	}
 	
 	//Helper for method2
-	public static int getFrequency(int[] allElements, int element) {
+	private static int getFrequency(int[] allElements, int element) {
 		int elementCount = 0;
 		for(int i = 0; i < allElements.length; i++){
 			if(allElements[i] == element){
@@ -119,11 +135,44 @@ public class MajorityElementMethods {
 	}
 	
 	//Checks if element returned from findMajorityElementByMethod2 is majority or not
-	public static void checkIfElementIsMajority(int element, String fileName) {
+	private static void checkIfElementIsMajority(int element, String fileName) {
 		if(element == 0){
 			System.out.println("Method 2 - " + fileName + ": No majority element exists");
 		} else{
 			System.out.println("Method 2 - " + fileName + ": "+ element + " is the majority element");
+		}
+	}
+	
+	//Method 3 - step 1: find the candidate for majority index
+	public static int findMajorityElementByMethod3(int[] allElements, String fileName) {
+		int majority_index = 0, count = 1;
+		for(int i = 1; i < allElements.length; i++){
+			if(allElements[majority_index] == allElements[i]){
+				count++;
+			} else {
+				count--;
+				if(count == 0){
+					majority_index = i;
+					count = 1;
+				}
+			}
+		}
+		return majority_index;
+	}
+	
+	//Method 3 - step 1: check if the candidate at an index is the majority element 
+	private static void checkIfIndexHasMajority(int[] allElements, String fileName, int majorityIndexCandidate) {
+		int count = 0;
+		for(int i = 0; i < allElements.length; i++){
+			if(allElements[i] == allElements[majorityIndexCandidate]){
+				count++;
+			}
+		}
+		
+		if(count > (allElements.length/2)){
+			System.out.println("Method 3 - " + fileName + ": "+ allElements[majorityIndexCandidate] + " is the majority element");
+		} else{
+			System.out.println("Method 3 - " + fileName + ": No majority element exists");
 		}
 	}
 }
