@@ -6,26 +6,20 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MajorityElementMethods {
-	public static String fileName;
-	
 	public static void main(String[] args){
-		fileName = "Majex1.txt"; //CHANGE FILE NAME TO TRY A DIFFERENT FILE
+		String fileName = "Majex1.txt"; //CHANGE FILE NAME TO TRY A DIFFERENT FILE
 		int[] allElements = getDataFromFile(fileName);
 		System.out.println(allElements.length);
 		
 		//Method 1: O(N^2)
-		findMajorityElementByMethod1(allElements);
+		findMajorityElementByMethod1(allElements, fileName);
 		
 		//Method 2: O(N*logN)
 		int element = findMajorityElementByMethod2(allElements);
-		if(element == 0){
-			System.out.println("Method 2 - " + fileName + ": No majority element exists");
-		} else{
-			System.out.println("Method 2 - " + fileName + ": "+ element + " is the majority element");
-		}
+		checkIfElementIsMajority(element, fileName);
 		
 		//Method 3: O(N)
-			
+		findMajorityElementByMethod2(allElements);	
 	}
 
 	public static int[] getDataFromFile(String inputFile){
@@ -51,7 +45,7 @@ public class MajorityElementMethods {
 		return allElements;
 	}
 	
-	public static void findMajorityElementByMethod1(int[] allElements) {
+	public static void findMajorityElementByMethod1(int[] allElements, String fileName) {
 		int arrayLength = allElements.length;
 		boolean majorityElementExists = false;
 		for(int majorityCandidate = 0; majorityCandidate < arrayLength; majorityCandidate++){
@@ -112,7 +106,8 @@ public class MajorityElementMethods {
 			return 0;
 		}
 	}
-
+	
+	//Helper for method2
 	public static int getFrequency(int[] allElements, int element) {
 		int elementCount = 0;
 		for(int i = 0; i < allElements.length; i++){
@@ -121,5 +116,14 @@ public class MajorityElementMethods {
 			}
 		}
 		return elementCount;
+	}
+	
+	//Checks if element returned from findMajorityElementByMethod2 is majority or not
+	public static void checkIfElementIsMajority(int element, String fileName) {
+		if(element == 0){
+			System.out.println("Method 2 - " + fileName + ": No majority element exists");
+		} else{
+			System.out.println("Method 2 - " + fileName + ": "+ element + " is the majority element");
+		}
 	}
 }
