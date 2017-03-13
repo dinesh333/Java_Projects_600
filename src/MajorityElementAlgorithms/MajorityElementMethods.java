@@ -6,10 +6,26 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MajorityElementMethods {
+	public static String fileName;
+	
 	public static void main(String[] args){
-		int[] allElements = getDataFromFile("Majex1.txt");
+		fileName = "Majex1.txt"; //CHANGE FILE NAME TO TRY A DIFFERENT FILE
+		int[] allElements = getDataFromFile(fileName);
 		System.out.println(allElements.length);
+		
+		//Method 1: O(N^2)
 		findMajorityElementByMethod1(allElements);
+		
+		//Method 2: O(N*logN)
+		int element = findMajorityElementByMethod2(allElements);
+		if(element == 0){
+			System.out.println("Method 2 - " + fileName + ": No majority element exists");
+		} else{
+			System.out.println("Method 2 - " + fileName + ": "+ element + " is the majority element");
+		}
+		
+		//Method 3: O(N)
+			
 	}
 
 	public static int[] getDataFromFile(String inputFile){
@@ -44,13 +60,66 @@ public class MajorityElementMethods {
 				if(allElements[otherNum] == allElements[majorityCandidate])
 					counter++;
 			}
-			if(counter >= arrayLength/2){
+			if(counter > arrayLength/2){
 				majorityElementExists = true;
-				System.out.println(allElements[majorityCandidate] + " is the majority element");
+				System.out.println("Method 1 - " + fileName + ": " + allElements[majorityCandidate] + " is the majority element");
 				break;
 			}
 		}
 		if(!majorityElementExists)
-			System.out.println("No majority element exists");
+			System.out.println("Method 1 - " + fileName + ": No majority element exists");
+	}
+	
+	public static int findMajorityElementByMethod2(int[] allElements) {
+		int arrayLength = allElements.length;
+		int halfArrayLength = arrayLength/2;
+		int elementOfLeft, elementOfRight;
+		int[] leftElements = null, rightElements = null;
+		
+		if(arrayLength == 1){
+			return allElements[0];
+		}
+
+		if(arrayLength % 2 == 0){
+			leftElements = new int[halfArrayLength];
+			rightElements = new int[halfArrayLength];
+			for(int i = 0; i < halfArrayLength; i++){
+				leftElements[i] = allElements[i];
+				rightElements[i] = allElements[halfArrayLength + i];
+			}
+		}else{
+			leftElements = new int[halfArrayLength+1];
+			rightElements = new int[halfArrayLength];
+			for(int i = 0; i <= halfArrayLength; i++){
+				leftElements[i] = allElements[i];
+				if(i < halfArrayLength)
+					rightElements[i] = allElements[halfArrayLength+1 + i];
+			}
+		}
+		elementOfLeft = findMajorityElementByMethod2(leftElements);
+		elementOfRight = findMajorityElementByMethod2(rightElements);
+		if(elementOfLeft == elementOfRight){
+			return elementOfLeft;
+		}
+		int countOfLeftElement = getFrequency(allElements, elementOfLeft);
+		int countOfRightElement = getFrequency(allElements, elementOfRight);
+		
+		if(countOfLeftElement > halfArrayLength){
+			return elementOfLeft;
+		}else if(countOfRightElement > halfArrayLength){
+			return elementOfRight;
+		}else{
+			return 0;
+		}
+	}
+
+	public static int getFrequency(int[] allElements, int element) {
+		int elementCount = 0;
+		for(int i = 0; i < allElements.length; i++){
+			if(allElements[i] == element){
+				elementCount++;
+			}
+		}
+		return elementCount;
 	}
 }
