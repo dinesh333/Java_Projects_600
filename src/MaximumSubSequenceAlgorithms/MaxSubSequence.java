@@ -3,8 +3,8 @@ package MaximumSubSequenceAlgorithms;
 import java.util.Random;
 
 public class MaxSubSequence {
-	final static int MAX = 1000;
-	final static int MIN = -1000;
+	public final static int MAX = 1000;
+	public final static int MIN = -1000;
 	
 	public static void main(String[] args){
 		int arraySize;
@@ -13,6 +13,19 @@ public class MaxSubSequence {
 		arraySize = 5000; //CHANGE THE ARRAY SIZE TO SEE THE EXECUTION TIMES FOR DIFFERENT N VALUES.
 		array = getArrayOfSize(arraySize);
 		find4RunningTimes(array, arraySize);
+	}
+	
+	/**
+	 * Generates an array of certain size, with ints
+	 * within range MAX and MIN.
+	 */
+	public static int[] getArrayOfSize(int size){
+		int[] array = new int[size];
+		Random rand = new Random();
+		for(int i = 0; i < size; i++){
+			array[i] = rand.nextInt((MAX - MIN) + 1) + MIN;
+		}
+		return array;
 	}
 	
 	/**
@@ -48,19 +61,6 @@ public class MaxSubSequence {
 				+ "Algorithm 3 is O(NlogN) so it has shorter running time than algorithm 1 and 2"
 				+ " but longer running time than algorithm 4.\n"
 				+ "Algorithm 4 is O(N) and has the shortest running time.");
-	}
-	
-	/**
-	 * Generates an array of certain size, with ints
-	 * within range MAX and MIN.
-	 */
-	public static int[] getArrayOfSize(int size){
-		int[] array = new int[size];
-		Random rand = new Random();
-		for(int i = 0; i < size; i++){
-			array[i] = rand.nextInt((MAX - MIN) + 1) + MIN;
-		}
-		return array;
 	}
 	
 	/**
