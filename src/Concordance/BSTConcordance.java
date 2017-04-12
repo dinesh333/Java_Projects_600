@@ -24,8 +24,10 @@ public class BSTConcordance {
 				root = bst.insert(word, root);
 			}
 		}
-		
+		System.out.println("------------In-order Traversal----------------");
 		bst.inOrderTraversal(root);
+		System.out.println("------------Pre-order Traversal----------------");
+		bst.preOrderTraversal(root, 0);
 	}
 
 	public static boolean isNumber(String word) {
@@ -58,6 +60,15 @@ public class BSTConcordance {
 		}
 	}
     
+	public void preOrderTraversal(Node current, int space){
+		if(current == null)
+			return;
+		for(int i = 0; i < space; i++)
+			System.out.print("  ");
+		System.out.println(current.word);
+		preOrderTraversal(current.left, space + 1);
+		preOrderTraversal(current.right, space + 1);	
+	}
 	
 	private class Node{
 		String word;
