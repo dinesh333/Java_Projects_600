@@ -7,7 +7,7 @@ public class AVLTreeTest {
 }
 
 class AVLNode {
-	int data, height;
+	int data, height, frequency;
 	AVLNode left, right;
 
 	AVLNode(int data) {
@@ -15,6 +15,7 @@ class AVLNode {
 		this.data = data;
 		height = -1;
 		right = null;
+		frequency = 1;
 	}
 }
 
@@ -38,6 +39,7 @@ class AVLTree{
 			current.right = insert(data, current.right);
 		} else {
 			//data already exists in tree.
+			current.frequency++;
 			return current;
 		}
 		current.height = maxHeight(getHeight(current.left), getHeight(current.right)) + 1;
@@ -45,23 +47,20 @@ class AVLTree{
 		//Check if tree unbalanced
 		int balanceCheck = getHeight(current.left) - getHeight(current.right);
 		
-		//Case 1: Left-Left => Single rotation to right.
 		if(balanceCheck > 1 && current.left.data > data){
 			current = rotateNodeToRight(current);
-		} 
-		//Case 2: Left-Right => Single rotation to left. Single rotation to right.
-		else if(balanceCheck > 1 && current.left.data < data){
+			System.out.println("Insertion, case 1: Left-Left => Single rotation to right.");
+		}else if(balanceCheck > 1 && current.left.data < data){
 			current.left = rotateNodeToLeft(current.left);
 			current = rotateNodeToRight(current);
-		}
-		//Case 3: Right-left => Single rotation to right. Single rotation to left.
-		else if(balanceCheck < -1 && current.right.data > data){
+			System.out.println("Insertion, case 2: Left-Right => Single rotation to left. Single rotation to right.");
+		}else if(balanceCheck < -1 && current.right.data > data){
 			current.right = rotateNodeToRight(current.right);
 			current = rotateNodeToLeft(current);
-		}
-		//Case 4: Right-Right case => Single rotation to left.
-		else if(balanceCheck < -1 && current.right.data < data){
+			System.out.println("Insertion, case 3: Right-left => Single rotation to right. Single rotation to left.");
+		}else if(balanceCheck < -1 && current.right.data < data){
 			current = rotateNodeToLeft(current);
+			System.out.println("Insertion, case 4: Right-Right case => Single rotation to left.");
 		}
 		return current;
 	}
@@ -150,23 +149,20 @@ class AVLTree{
 		int leftSubtreeBalanceCheck = getHeight(current.left.left) - getHeight(current.left.right);
 		int rightSubtreeBalanceCheck = getHeight(current.right.left) - getHeight(current.right.right);
 		
-		//Case 1: Left-Left => Single rotation to right.
 		if(balanceCheck > 1 && leftSubtreeBalanceCheck >= 0){
 			current = rotateNodeToRight(current);
-		}
-		//Case 2: Left-Right => Single rotation to left. Single rotation to right.
-		else if(balanceCheck > 1 && leftSubtreeBalanceCheck < 0){
+			System.out.println("Deletion, case 1: Left-Left => Single rotation to right.");
+		}else if(balanceCheck > 1 && leftSubtreeBalanceCheck < 0){
 			current.left = rotateNodeToLeft(current.left);
 			current = rotateNodeToRight(current);
-		}
-		//Case 3: Right-left => Single rotation to right. Single rotation to left.
-		else if(balanceCheck < -1 && rightSubtreeBalanceCheck >= 0){
+			System.out.println("Deletion, case 2: Left-Right => Single rotation to left. Single rotation to right.");
+		}else if(balanceCheck < -1 && rightSubtreeBalanceCheck >= 0){
 			current.right = rotateNodeToRight(current.right);
 			current = rotateNodeToLeft(current);
-		}
-		//Case 4: Right-Right case => Single rotation to left.
-		else if(balanceCheck < -1 && rightSubtreeBalanceCheck < 0){
+			System.out.println("Deletion, case 3: Right-left => Single rotation to right. Single rotation to left.");
+		}else if(balanceCheck < -1 && rightSubtreeBalanceCheck < 0){
 			current = rotateNodeToLeft(current);
+			System.out.println("Insertion, case 4: Right-Right case => Single rotation to left.");
 		}
 		
 		return current;
@@ -176,5 +172,32 @@ class AVLTree{
 		while(current.right != null)
 			current = current.right;
 		return current;
+	}
+	
+	public void inOrderTraversal(){
+		inOrderTraversal(root);
+	}
+	
+	private void inOrderTraversal(AVLNode current){
+		if(current != null){
+			inOrderTraversal(current.left);
+			System.out.println(current.data + ": (" + current.frequency + ")");
+			inOrderTraversal(current.right);
+		}
+	}
+	
+	public void preOrderTraversal(){
+		preOrderTraversal(root, 0);
+	}
+	
+	private void preOrderTraversal(AVLNode current, int space){
+		for(int i = 0; i < space; i++){
+			System.out.println("    ");
+		}
+		if(current != null){
+			System.out.println(current.data);
+			preOrderTraversal(current.left, space++);
+			preOrderTraversal(current.right, space++);
+		}
 	}
 }
