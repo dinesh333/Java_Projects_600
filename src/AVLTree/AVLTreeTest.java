@@ -1,24 +1,49 @@
 package AVLTree;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class AVLTreeTest {
 	public static void main(String[] args) {
-		AVLTree tree = new AVLTree();
-		tree.insert(100);
-		tree.insert(50);
-		tree.insert(200);
-		tree.insert(25);
-		tree.insert(75);
-		tree.insert(150);
-		tree.insert(300);
-		tree.insert(300);
-		tree.preOrderTraversal();
-		tree.inOrderTraversal();
-		tree.delete(100);
-		tree.delete(50);
-		tree.delete(300);
-		tree.preOrderTraversal();
-		tree.inOrderTraversal();
+		File inputFile = new File("AVLinput.txt");
+		AVLTreeTest test = new AVLTreeTest();
+		test.getAVLTree(inputFile);
 	}
+	
+	//Gives AVL Tree for an input file with sign and number.
+	//+43 means insert 43. -43 means delete 43.
+	public void getAVLTree(File inputFile) {
+		AVLTree tree = new AVLTree();
+		Scanner scan = null;
+		try{
+			scan = new Scanner(inputFile);
+		}catch(FileNotFoundException e){
+			System.out.println("File " + inputFile + " not found.");
+		}
+		
+		String input = "";
+		while(scan.hasNext()){
+			input = input + scan.next();
+		}
+		
+		String[] inputArray = input.split(",");
+		for(int i = 0; i < inputArray.length; i++){
+			String signedNumber = inputArray[i];
+			char sign = signedNumber.charAt(0);
+			String number = signedNumber.substring(1);
+			int num = Integer.parseInt(number);
+			if(sign == '+')
+				tree.insert(num);
+			else
+				tree.delete(num);
+		}
+		System.out.println("\nInorder traversal with frequencies");
+		tree.inOrderTraversal();
+		System.out.println("\nPreorder traversal with readable format");
+		tree.preOrderTraversal();
+	}
+	
 }
 
 class AVLNode {
